@@ -1,0 +1,28 @@
+// start of script
+pipeline {
+  agent any
+  stages {
+    stage('Clone sources') {
+      steps {
+        git url: 'https://github.com/martin-scantist/pets-app'
+      }
+    }
+    stage ('Scantist analysis') {
+      steps {
+          sh '''
+            curl -s https://download.scantist.io/scantist-bom-detect.jar --output scantist-bom-detect.jar
+            java -jar scantist-bom-detect.jar -checkCompliance -compliancePolicy pass-pipeline
+            echo "view scan result at scantist.io"
+            '''
+       }
+     }
+     stage ('Sonarqube scan'){
+       steps {
+         sh '''
+            echo "start sonarqube scan"
+            '''
+       }  
+     }
+   }
+}
+// End of script
